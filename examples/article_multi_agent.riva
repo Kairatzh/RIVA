@@ -1,0 +1,41 @@
+workflow article_multi_agent:
+  description: "Писатель и критик совместно создают улучшенную статью"
+
+  agents:
+    writer:
+      model: gpt-4.1
+      role: "Пишет статьи"
+    critic:
+      model: gpt-4.1-mini
+      role: "Оценивает и предлагает улучшения"
+
+  inputs:
+    topic: text
+
+  outputs:
+    draft: text
+    improved_article: text
+
+step write_draft:
+  agent: writer
+  kind: text.generate
+  intent: auto "Написать черновик статьи по теме {topic}"
+  output: draft
+
+step review_draft:
+  agent: critic
+  kind: text.generate
+  input:
+    - draft
+  intent: auto "Дай список конкретных рекомендаций, как улучшить этот текст"
+  output: review_notes
+
+step improve_article:
+  agent: writer
+  kind: text.generate
+  input:
+    - draft
+    - review_notes
+  intent: auto "Улучшить черновик с учетом всех рекомендаций"
+  output: improved_article
+

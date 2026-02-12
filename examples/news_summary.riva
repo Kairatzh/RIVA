@@ -1,0 +1,31 @@
+workflow news_summary:
+  description: "Обзор новостных заголовков и краткая сводка"
+
+  models:
+    summarizer: gpt-4.1-mini
+
+  outputs:
+    headlines_text: text
+    summary_text: text
+
+step fetch_news:
+  from:
+    url: "https://example.com/api/news"
+    method: GET
+  output: headlines_json
+
+step format_headlines:
+  model: summarizer
+  kind: text.generate
+  input:
+    - headlines_json
+  intent: auto "Преобразуй JSON со списком новостей в удобный для чтения список заголовков"
+  output: headlines_text
+
+step summarize_headlines:
+  model: summarizer
+  kind: text.summarize
+  input:
+    - headlines_text
+  output: summary_text
+

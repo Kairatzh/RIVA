@@ -1,0 +1,27 @@
+workflow article_basic:
+  description: "Простой пайплайн: статья + краткое резюме"
+
+  models:
+    writer: gpt-4.1
+    analyzer: gpt-4.1-mini
+
+  inputs:
+    topic: text
+
+  outputs:
+    article_text: text
+    summary_text: text
+
+step generate_article:
+  model: writer
+  kind: text.generate
+  intent: auto "Написать понятную статью по теме {topic} для широкой аудитории"
+  output: article_text
+
+step summarize_article:
+  model: analyzer
+  kind: text.summarize
+  input:
+    - article_text
+  output: summary_text
+
